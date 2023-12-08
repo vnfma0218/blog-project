@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 import { Open_Sans } from 'next/font/google';
-import './globals.css';
 import NavItems from '@/components/NavItems';
+import './globals.css';
 import '@code-hike/mdx/dist/index.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 const sans = Open_Sans({ subsets: ['latin'] });
 
 export const metadata: Metadata = {

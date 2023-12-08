@@ -1,34 +1,28 @@
-import { getPostMD, getPosts } from '@/services/post';
+import { getPosts } from '@/services/post';
 import dynamic from 'next/dynamic';
-import ReactMarkdown from 'react-markdown';
-import Example from '@/app/example.mdx';
-import rehypeHighlight from 'rehype-highlight';
-const options = {
-  mdxOptions: {
-    remarkPlugins: [],
-    rehypePlugins: [rehypeHighlight],
-  },
-};
 
 export default async function ProductDetailPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const ImportedMdx = dynamic(() => import('../../../../data/mds/p1.mdx'), {
-    ssr: false,
-  });
+  const ImportedMdx = dynamic(
+    () => import(`../../../../data/mds/${params.slug}.mdx`),
+    {
+      ssr: false,
+    }
+  );
   return (
-    <>
+    <div className="prose">
       <ImportedMdx />
-    </>
+    </div>
   );
 }
 
 export async function generateStaticParams() {
-  const posts = await getPosts();
+  const posts = await getPosts({ onlyFeatured: false });
 
   return posts.map((post) => ({
-    slug: post.id,
+    slug: post.path,
   }));
 }

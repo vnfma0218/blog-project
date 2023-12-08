@@ -1,9 +1,18 @@
-import { getPosts } from '@/services/post';
+import HomeSlider from '@/components/HomeSlider';
+import PostItem from '@/components/PostItem';
+import { Post, getPosts } from '@/services/post';
 import Image from 'next/image';
-import Link from 'next/link';
 
 export default async function Home() {
-  const postList = await getPosts();
+  const postList = await getPosts({ onlyFeatured: true });
+
+  const filteredPosts = (posts: Post[], onlyFeatured: boolean) => {
+    if (onlyFeatured) {
+      return posts.filter((p) => p.featured);
+    } else {
+      return posts;
+    }
+  };
 
   return (
     <main>
@@ -25,29 +34,16 @@ export default async function Home() {
       </article>
       <article>
         <p className="mt-10 text-xl font-bold">Featured Posts</p>
-        <ul className="flex">
-          {postList.map((post) => (
-            <Link href={`/posts/${post.id}`}>
-              <li className="transition ease-in-out delay-75 hover:scale-105 flex basis-1/3 flex-col m-2 shadow-md cursor-pointer">
-                <Image
-                  width={400}
-                  height={300}
-                  src={post.imagePath}
-                  alt="profile"
-                />
-                <p className="mt-1 flex justify-end text-sm mr-2">
-                  {' '}
-                  {post.createdAt}
-                </p>
-                <div className="flex flex-col items-center">
-                  <p className="font-bold">{post.title}</p>
-                  <p>{post.content}</p>
-                  <p className="mb-5">{post.category}</p>
-                </div>
-              </li>
-            </Link>
-          ))}
+        <ul className="justify-center flex flex-wrap justify-start ">
+          {postList &&
+            filteredPosts(postList, true).map((post) => (
+              <PostItem post={post} key={post.path} />
+            ))}
         </ul>
+      </article>
+      <article>
+        <p className="mt-10 text-xl font-bold">Featured Posts</p>
+        <HomeSlider posts={filteredPosts(postList, false)} />
       </article>
     </main>
   );

@@ -13,19 +13,24 @@ type PostMatter = {
   category: string;
 };
 
-type Post = {
-  id: string;
+export type Post = {
+  path: string;
   title: string;
-  content: string;
-  createdAt: string;
+  description: string;
+  date: string;
   imagePath: string;
   category: string;
+  featured: boolean;
 };
 
-export async function getPosts(): Promise<Post[]> {
+export async function getPosts({ onlyFeatured = false }): Promise<Post[]> {
   const filePath = path.join(process.cwd(), 'data', 'posts.json');
   const data = await fs.readFile(filePath, 'utf-8');
-  return JSON.parse(data);
+  const parsedData: Post[] = JSON.parse(data);
+  if (onlyFeatured) {
+    return parsedData.filter((post) => post.featured);
+  }
+  return parsedData;
 }
 
 export async function getPostMD(id: string) {
